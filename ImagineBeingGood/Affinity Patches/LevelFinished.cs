@@ -15,21 +15,19 @@ namespace ImagineBeingGood.Affinity_Patches
     [Bind(Location.GameCore)]
     internal class LevelFinished : IAffinity, IAsyncInitializable
     {
-        private SiraLog _siraLog;
         private readonly PluginConfig _config;
         private readonly GameplayCoreSceneSetupData _gameplayCoreSceneSetupData;
         private static SongDetails? _songDetails;
         
-        public LevelFinished(SiraLog siraLog, PluginConfig config, GameplayCoreSceneSetupData gameplayCoreSceneSetupData)
+        public LevelFinished(PluginConfig config, GameplayCoreSceneSetupData gameplayCoreSceneSetupData)
         {
-            _siraLog = siraLog;
             _config = config;
             _gameplayCoreSceneSetupData = gameplayCoreSceneSetupData;
         }
 
         public async Task InitializeAsync(CancellationToken token)
         {
-            if (_songDetails != null) return;
+            if (_songDetails != null || !_config.Enabled) return;
             _songDetails = await SongDetails.Init();
         }
         
@@ -37,7 +35,7 @@ namespace ImagineBeingGood.Affinity_Patches
         [AffinityPatch(typeof(StandardLevelScenesTransitionSetupDataSO), nameof(StandardLevelScenesTransitionSetupDataSO.Finish))]
         internal bool CheckCriteria(LevelCompletionResults levelCompletionResults)
         {
-            if (_songDetails == null) return true;
+            if (!_config.Enabled || _songDetails == null) return true;
             var acc = levelCompletionResults.totalCutScore / (float)levelCompletionResults.maxCutScore / 100f;
             if (acc < _config.TargetAccuracy) return true;
 
@@ -47,7 +45,6 @@ namespace ImagineBeingGood.Affinity_Patches
             if (diff.stars < _config.TargetStarDifficulty) return true;
 
             var rand = new System.Random();
-            
             if (rand.NextDouble() <= _config.Chance)
                 Application.Quit(0);
             return false;
