@@ -1,0 +1,17 @@
+<settings-container xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:noNamespaceSchemaLocation='https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd'>
+    <macro.as-host host="_config">
+        <bool-setting text="Enabled" value="Enabled" apply-on-change="true" />
+        <increment-setting text="Required Star Difficulty" value="TargetStarDifficulty" apply-on-change="true"
+                           hover-hint="The minimum star difficulty to allow the possibility of the game crashing"
+                           min="0" increment="0.5" formatter="star"
+        />
+        <increment-setting text="Required Accuracy" value="TargetAccuracy" apply-on-change="true" 
+                           hover-hint="The minimum accuracy to allow the possibility of the game crashing"
+                           min="0" max="1" formatter="percentage" increment="0.05"
+        />
+        <increment-setting text="Crash Chance" value="Chance" apply-on-change="true"
+                           hover-hint="The chance of the game crashing if the criteria is met"
+                           min="0" max="1" formatter="percentage" increment="0.05" 
+        />
+    </macro.as-host>
+</settings-container>
